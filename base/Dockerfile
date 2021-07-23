@@ -4,10 +4,13 @@ MAINTAINER Ivan Ermilov <ivan.s.ermilov@gmail.com>
 MAINTAINER Giannis Mouchakis <gmouchakis@iit.demokritos.gr>
 MAINTAINER Chen Peng <pizer.chen@gmail.com>
 
+ADD fixbadproxy /etc/apt/apt.conf.d/99fixbadproxy
+
 RUN sed -i "s@http://deb.debian.org@http://mirrors.aliyun.com@g" /etc/apt/sources.list \ 
     && sed -i "s@http://security.debian.org@http://mirrors.aliyun.com@g" /etc/apt/sources.list \ 
     && cat /etc/apt/sources.list \
-    && rm -Rf /var/lib/apt/lists/* 
+    && rm -Rf /var/lib/apt/lists/* \
+    && apt-get update
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       openjdk-8-jdk \
@@ -16,6 +19,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
       netcat \
       gnupg \
       libsnappy-dev \
+    && apt-get clean \  
     && rm -rf /var/lib/apt/lists/*
       
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
